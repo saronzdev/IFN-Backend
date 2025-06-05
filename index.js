@@ -32,11 +32,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(cors({
-  origin: ['http://localhost:4321', DOMAIN],
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
-}))
+app.use(cors())
 
 app.use(express.json())
 
