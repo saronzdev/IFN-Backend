@@ -32,8 +32,19 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(cors())
+const allowedOrigins = ['http://localhost:4321', DOMAIN]
 
+const corsOptions = {
+  origin: (origin, callback) => {
+    console.log(origin)
+    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+    else callback(new Error('El origen no está permitido'));
+    },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}
+
+app.use(cors(corsOptions))
 app.use(express.json())
 
 const fileDir = (name) => path.join(process.cwd(), 'content', 'posts', name)
@@ -60,7 +71,6 @@ app.get('/api/posts', async (req, res) => {
         content: postContent
       }
     }))
-    console.log('Posts:', posts)
     res.json(await posts)
   } catch (error) {
     res.status(500).json({
@@ -110,7 +120,7 @@ ${body}`
   res.json({message: 'Post creado exitosamente'})
 })
 
-app.listen(3000, (error) => {
+app.listen(PORT, (error) => {
   if (error) {
     console.error('Error al iniciar el servidor:', error)
     process.exit(1)
